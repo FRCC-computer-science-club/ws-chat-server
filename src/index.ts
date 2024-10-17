@@ -1,3 +1,3 @@
 import {Server} from "./server";
 
-let server = new Server()
+let _server = new Server()

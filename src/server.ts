@@ -3,9 +3,7 @@ import {IncomingMessage} from "http"
 import {createServer as createHttpsServer} from "https"
 import {readFileSync} from 'fs';
 
-import {Connection} from "./connection"
-import {ChatMessage} from "./chatMessage";
-import {ControlMessage} from "./controlMessage";
+import {Connection} from "./connection";
 import {Message} from "./message";
 
 type ServerSettings = ServerOptions<typeof WebSocket.WebSocket, typeof IncomingMessage>

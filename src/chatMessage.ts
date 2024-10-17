@@ -1,5 +1,4 @@
 import {ConnectionMode} from "./connection";
-import {SERVER_CTRL_CHAR} from "./controlMessage";
 
 interface Message_Raw {
     author: string;
