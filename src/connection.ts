@@ -64,6 +64,7 @@ export class Connection {
         let connection = new Connection(socket, secure, server, id)
 
         server.connections.set(id, connection)
+        server.usernames.set(id, `unknown(${id})`)
 
         socket.addListener("message", (data: Buffer) => {
             try {
@@ -95,8 +96,6 @@ export class Connection {
             msg_type: "control", payload: new ControlMessage(connection.secure, "status", ["ready"], "[SERVER]")
         }
         connection.send(msg)
-
-        server.usernames.set(connection.id, `unknown(${connection.id})`)
 
     }
 
