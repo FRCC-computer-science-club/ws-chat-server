@@ -66,7 +66,19 @@ export class Connection {
         server.connections.set(id, connection)
 
         socket.addListener("message", (data: Buffer) => {
-            connection.handle_message(data)
+            try {
+                connection.handle_message(data)
+            } catch (e: any) {
+                try {
+                    let err: Message = {
+                        msg_type: "control",
+                        payload: new ControlMessage(connection.secure, "error", [e.toString()], "[SERVER]")
+                    }
+                    connection.send(err)
+                } catch {
+
+                }
+            }
         })
 
         socket.addListener("close", () => {
