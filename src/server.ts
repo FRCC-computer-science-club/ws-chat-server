@@ -30,7 +30,7 @@ export class Server {
             console.log("insecure ws server closed")
         })
         this.wss_insecure.addListener("listening", () => {
-            console.log(`insecure ws server listening on ${INSECURE_WSS_PORT}`)
+            console.log(`insecure ws server listening on port ${INSECURE_WSS_PORT}`)
         })
 
         let parent_server = this;
@@ -51,7 +51,7 @@ export class Server {
             console.log("secure ws server closed")
         })
         this.wss_secure.addListener("listening", () => {
-            console.log(`secure ws server listening on ${SECURE_WSS_PORT}`)
+            console.log(`secure ws server listening on port ${SECURE_WSS_PORT}`)
         })
         this.wss_secure.addListener("connection", (socket: WebSocket, request: IncomingMessage) => {
             Connection.init_connection(socket, request, true, parent_server)

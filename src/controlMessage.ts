@@ -2,9 +2,7 @@ import {Connection, ConnectionMode} from "./connection";
 import {Server} from "./server";
 import {Message} from "./message";
 
-
 export const SERVER_CTRL_CHAR = '@'
-export const PUB_CTRL_CHAR = '&'
 
 interface Command_Raw {
     control: String;

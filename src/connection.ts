@@ -32,7 +32,7 @@ export class Connection {
         let str = data.toString("utf8")
         let msg = deserialize_message(this.mode, str, this.secure, this.username ?? `unknown(${this.id})`)
 
-        if(msg.msg_type == "chat") {
+        if (msg.msg_type == "chat") {
             console.log(`${msg.msg_type} - ${msg.payload.serialize(ConnectionMode.plaintext, this.id)}`)
             this.parent_server.broadcast_except(msg, this.id)
             return
@@ -55,7 +55,7 @@ export class Connection {
         let id = Connection.next_connection_id
         Connection.next_connection_id += 1;
 
-        if(secure) {
+        if (secure) {
             console.log(`secure ws server accepting connection ${id}`)
         } else {
             console.log(`insecure ws server accepting connection ${id}`)
@@ -69,10 +69,22 @@ export class Connection {
             connection.handle_message(data)
         })
 
+        socket.addListener("close", () => {
+            server.usernames.delete(connection.id)
+            let name = connection.username ?? `unknown(${connection.id})`
+            let leave: Message = {
+                msg_type: "control", payload: new ControlMessage(connection.secure, "userleave", [name], "[SERVER]")
+            }
+            server.broadcast_except(leave, connection.id)
+            server.connections.delete(connection.id)
+        })
+
         let msg: Message = {
             msg_type: "control", payload: new ControlMessage(connection.secure, "status", ["ready"], "[SERVER]")
         }
         connection.send(msg)
+
+        server.usernames.set(connection.id, `unknown(${connection.id})`)
 
     }
 
