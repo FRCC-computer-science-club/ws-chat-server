@@ -10,6 +10,8 @@ export enum ConnectionMode {
     plaintext, json,
 }
 
+export const SECURE_TEXT_FLAG = "[#]"
+export const INSECURE_TEXT_FLAG = "[!]"
 
 export class Connection {
     static next_connection_id = 0
@@ -30,15 +32,24 @@ export class Connection {
 
     public handle_message(data: Buffer) {
         let str = data.toString("utf8")
-        let msg = deserialize_message(this.mode, str, this.secure, this.username ?? `unknown(${this.id})`)
+        let msg = deserialize_message(this.mode, str, this.secure, this.username ?? `connection_${this.id}`)
 
         if (msg.msg_type == "chat") {
-            console.log(`${msg.msg_type} - ${msg.payload.serialize(ConnectionMode.plaintext, this.id)}`)
+            let logmsg = `${msg.msg_type} - ${msg.payload.serialize(ConnectionMode.plaintext, this.id)}`
+            this.parent_server.log(logmsg)
             this.parent_server.broadcast_except(msg, this.id)
             return
         }
 
         if (msg.msg_type == "control") {
+            let secure_flag
+            if (this.secure) {
+                secure_flag = SECURE_TEXT_FLAG
+            } else {
+                secure_flag = INSECURE_TEXT_FLAG
+            }
+            let logmsg = `${msg.msg_type} - ${secure_flag} ${msg.payload.author ?? `connection_${this.id}`} ${msg.payload.control} [${msg.payload.params.join(", ")}]`
+            this.parent_server.log(logmsg)
             msg.payload.run(this, this.parent_server)
         }
 
@@ -56,9 +67,9 @@ export class Connection {
         Connection.next_connection_id += 1;
 
         if (secure) {
-            console.log(`secure ws server accepting connection ${id}`)
+            server.log(`secure ws server accepting connection ${id}`)
         } else {
-            console.log(`insecure ws server accepting connection ${id}`)
+            server.log(`insecure ws server accepting connection ${id}`)
         }
 
         let connection = new Connection(socket, secure, server, id)

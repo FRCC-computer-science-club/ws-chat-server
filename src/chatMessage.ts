@@ -1,4 +1,4 @@
-import {ConnectionMode} from "./connection";
+import {ConnectionMode, INSECURE_TEXT_FLAG, SECURE_TEXT_FLAG} from "./connection";
 
 interface Message_Raw {
     author: string;
@@ -22,14 +22,14 @@ export class ChatMessage {
             case ConnectionMode.plaintext:
                 let secure_status
                 if(this.secure) {
-                    secure_status = "<#>"
+                    secure_status = SECURE_TEXT_FLAG
                 } else {
-                    secure_status = "<!>"
+                    secure_status = INSECURE_TEXT_FLAG
                 }
                 return `${secure_status} ${this.author} : ${this.payload}`
             case ConnectionMode.json:
                 let raw:Message_Raw = {
-                    author: this.author ?? `unknown(${connection_id})`,
+                    author: this.author ?? `connection_${connection_id}`,
                     secure: this.secure,
                     payload: this.payload
                 }
